@@ -1,0 +1,6 @@
+chardet===5.2.0
+Flask===2.3.2
+Flask-Cors===4.0.0
+pandas===2.1.1
+numpy===1.24.2
+datefinder===0.7.3
