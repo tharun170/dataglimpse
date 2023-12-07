@@ -33,8 +33,7 @@ import { PieChart,pieArcLabelClasses } from '@mui/x-charts/PieChart';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import MandateColumns from './MandateColumns';
 import { Router, useNavigate} from 'react-router-dom';
-
-
+import PieArcLabel from './PieArcLabel';
 
 
 const ColumnInfoTable = ({ columnInfo }) => {
@@ -102,7 +101,7 @@ const DataCard = ({ title, data }) => {
       cursor: 'pointer',
       boxShadow: '0 4px 8px rgba(0.1, 0.1, 0.1, 0.45)',
       marginBottom:'10px',
-      color: '#000', // Set text color to black
+      color: '#000', 
       marginTop:'18px',
       color: theme.palette.text.secondary,
       '&:hover': {
@@ -117,7 +116,7 @@ const DataCard = ({ title, data }) => {
                     <div style={{color:'#000'}}>{data}   </div>) : (data ? (Object.entries(data).map(([key, value]) => (
               <div key={key}>
                 {title === 'Shape' ? ( <div style={{color:'#000'}}>
-                    {key === '0' ? ( <strong>Rows:</strong>) : key === '1' ? (<strong>Columns:</strong>) : 
+                    {key === '0' ? ( <strong>Columns:</strong>) : key === '1' ? (<strong>Rows:</strong>) : 
                     (<strong>{key}:</strong>)} {value}
                   </div>) : (<div style={{color:'#333'}}>
                     <strong>{key}:</strong> {value}
@@ -140,18 +139,15 @@ const Result = () => {
   const location = useLocation();
   const { data } = location.state || {};
   const emptyrows=data.empty_rows;
-  const nonempty=data.shape[1]-data.empty_rows;
+  const nonempty=data.rows-data.empty_rows;
   const navigate = useNavigate();
   
   const handleClose = () => {
-    
     navigate('/');
   };
-
-  const data01 = [
-    { name: 'Rows', value: data.shape[0] },
-    { name: 'Columns', value: data.shape[1] },
-  ];
+const piedata=[{ value: emptyrows, label: 'Empty Rows',color: '#8884d8' },
+{ value: nonempty, label: 'Non-empty Rows' }]
+  
   return (
     <div>
       <Nav/> <Grid container alignItems="center" justifyContent="space-between">
@@ -160,6 +156,7 @@ const Result = () => {
   <FileCopyIcon style={{ marginRight: '5px'}} />
   <h3 style={{ margin: '0', marginRight:'10px' }}>Filename: </h3>
   <div> {data.filename}</div>
+
   <Grid item>
             <IconButton color="inherit" onClick={handleClose} style={{paddingTop:'13px' }} >
               <CloseIcon />
@@ -171,7 +168,6 @@ const Result = () => {
         </Grid>
       </Grid>
       <Grid container spacing={2} className='grid' style={{paddingLeft:'5px',paddingRight:'5px'}}  >
-
 <DataCard title="Shape" data={data.shape} />
 <DataCard title="Date Format" data={data.date_format} />
 <DataCard title="Date Range" data={data.date_range} />
@@ -181,8 +177,6 @@ const Result = () => {
   <DataRowTable title="First Row" data={data.first_row} />
   <DataRowTable title="Last Row" data={data.last_row} />
   </Grid>
-
-
 <Grid container spacing={2}>
       <Grid item xs={5}>
       <MismatchedColumns mismatchedColumn={data.mismatched_columns} number={data.number_of_unmatched_columns}/>
@@ -192,40 +186,31 @@ const Result = () => {
         </div>
       </Grid>
       <Grid item xs={7}>
-  
         <Divider style={{fontSize:'20px'}}>Null Rows</Divider>
         <div style={{ display: 'flex', flexDirection: 'row' ,marginTop:'10px'}}>
-        
         <PieChart
-            series={[
-              {
-                data: [
-                  { value: emptyrows, label: 'Empty Rows',color: '#8884d8' },
-                  { value: nonempty, label: 'Non-empty Rows' },
-                ],
-                highlightScope: { faded: 'global', highlighted: 'item' },
-                faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
-                arcLabel: (item) => `${item.value}`,
-              },
-            ]}
-            width={550}
-            height={200}
-            sx={{
-              [`& .${pieArcLabelClasses.root}`]: {
-                fill: 'white',
-                fontWeight: 'bold',
-              },
-            }}
-          />
+      series={[
+        {
+          data:[{ value: emptyrows, label: 'Empty Rows',color: '#8884d8' },
+          { value: nonempty, label: 'Non-empty Rows' }],
+          highlightScope: { faded: 'global', highlighted: 'item' },
+          faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+          arcLabel: (item) => `${item.value}`
+        },
+      ]} sx={{
+        [`& .${pieArcLabelClasses.root}`]: {
+          fill: 'white',
+          fontWeight: 'bold',
+        },
+      }}
+      height={200}
+      width={500}
+    />
         </div>
       </Grid>
     </Grid>
-    {console.log(data.mandatecolumns)}
-    
     <NullValuesBarChart nullValues={data.null_values} />
-
 <Grid container spacing={2}>
-  
   <NullRowsTable nullValueRows={data.null_value_rows} />    
 </Grid>
 

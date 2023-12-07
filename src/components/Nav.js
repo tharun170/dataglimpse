@@ -20,7 +20,7 @@ function Nav(){
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
+            sx={{ mr: 2,marginRight: 0  }}
           >
             <img
               src={DataCollectionIcon}

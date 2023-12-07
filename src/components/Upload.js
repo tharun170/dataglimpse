@@ -46,32 +46,26 @@ const Upload = () => {
     setModalOpen(true);
   
     fetch('http://localhost:5000/upload_csv', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => response.text())
-      .then((responseData) => {
-        try { 
-          
-          const parsedData = JSON.parse(responseData.replace(/: NaN,/g, ': null,'));
-          if(!parsedData.flag){
-          setData(parsedData);
-          navigate('/result', { state: { data: parsedData} });
-          }else{
-            setUploadStatus('validate');
-          }
-        } catch (error) {
-          console.error('Error parsing JSON:', error);
-          setUploadStatus('error');
-        } finally {
-          setLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        setUploadStatus('error');
-        setLoading(false);
-      });
+  method: 'POST',
+  body: formData,
+})
+  .then((response) => response.json())
+  .then((responseData) => {
+    if(!responseData.flag){
+    console.log(responseData.flag)
+    navigate('/result', { state: { data: responseData} });}else{
+      setLoading(false);
+      setUploadStatus('validate');
+
+    }
+    // Handle the response data as needed
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+    setLoading(false);
+    setUploadStatus('error');
+
+  })
   };
   
   const handleGetResults = () => {
