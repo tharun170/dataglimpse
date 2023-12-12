@@ -36,10 +36,29 @@ function Signup() {
       const [username,setUsername]=React.useState("")
       const [loginstatus, setLoignstatus]=React.useState(true)
       const navigate =useNavigate();
+      const [emailError, setEmailError] = React.useState('');
+      const [passwordError, setPasswordError] = React.useState('');
+
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 
       const handleSubmit = async (event) => {
         event.preventDefault();
         try{
+          if (!emailPattern.test(email)) {
+            setEmailError('Invalid email address');
+            return;
+          } else {
+            setEmailError('');
+          }
+      
+          // Validate password
+          if (!passwordPattern.test(password)) {
+            setPasswordError('Password must contain at least 8 characters, one uppercase letter, and one digit');
+            return;
+          } else {
+            setPasswordError('');
+          }
         const registrationData = {
           username:username,
           email: email,
@@ -125,8 +144,9 @@ function Signup() {
               label="Email Address"
               name="email"
               autoComplete="email"
-              
-              onChange={(e)=>setEmail(e.target.value)}
+              error={!!emailError}
+              helperText={emailError}
+              onChange={(e)=>{setEmail(e.target.value);setEmailError('');}}
             />
             <TextField
               margin="normal"
@@ -137,7 +157,9 @@ function Signup() {
               type="password"
               id="password"
               autoComplete="current-password"
-              onChange={(e)=>setPassword(e.target.value)}
+              error={!!passwordError}
+              helperText={passwordError}
+              onChange={(e)=>{setPassword(e.target.value); setPasswordError('');}}
             />
             <Button
               type="submit"
